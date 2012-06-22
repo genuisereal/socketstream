@@ -76,10 +76,7 @@ processSession = (socket) ->
 
   # Parse session ID from initial hankshake data
   try
-    rawCookie = socket.handshake.headers.cookie
-    cookie = qs.parse(rawCookie, '; ')
-    sessionId = cookie['connect.sid'].split('.')[0]
-    socket.sessionId = sessionId
+    socket.sessionId = socket.handshake.sessionID
   catch e
     console.log('Warning: connect.sid session cookie not detected. User may have cookies disabled or session cookie has expired')
     false
