@@ -3,6 +3,8 @@
 # Internal middleware occupies the top-level namespace, i.e. does not contain any dots
 
 require('colors')
+queue = require('./rpcQueue')
+
 
 module.exports = (ss) ->
 
@@ -14,7 +16,7 @@ module.exports = (ss) ->
       next()
 
   session: (options = {}) ->
-    (request, response, next) ->
+    queue.decorate((request, response, next) ->
       if request.sessionId
         session.find request.sessionId, request.socketId, (thisSession) ->
           request.session = thisSession
@@ -24,4 +26,4 @@ module.exports = (ss) ->
           else
             console.log("! Error: Session ID #{request.sessionId} not found. Use Redis to persist sessions between server restarts. Terminating incoming request".red)
       else
-        throw new Error('Cannot load session. Request does not contain a sessionId')
+        throw new Error('Cannot load session. Request does not contain a sessionId'))
